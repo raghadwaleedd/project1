@@ -1,0 +1,57 @@
+<!-- templates/email/verification_email.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify Your Email</title>
+</head>
+<body>
+    <h2>Email Verification</h2>
+    <p>Hi {{ user.username }},</p>
+    <p>Please click the link below to verify your email address:</p>
+    <p><a href="{{ verification_url }}">Verify Email</a></p>
+    <p>This link will expire in {{ expiry_hours }} hours.</p>
+    <p>If you didn't create an account, please ignore this email.</p>
+</body>
+</html>
+
+<!-- templates/email/verification_email.txt -->
+Email Verification
+
+Hi {{ user.username }},
+
+Please click the link below to verify your email address:
+
+{{ verification_url }}
+
+This link will expire in {{ expiry_hours }} hours.
+
+If you didn't create an account, please ignore this email.
+
+<!-- templates/email/password_reset_email.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reset Your Password</title>
+</head>
+<body>
+    <h2>Password Reset Request</h2>
+    <p>Hi {{ user.username }},</p>
+    <p>You requested to reset your password. Please click the link below to set a new password:</p>
+    <p><a href="{{ reset_url }}">Reset Password</a></p>
+    <p>This link will expire in {{ expiry_hours }} hour.</p>
+    <p>If you didn't request this reset, please ignore this email.</p>
+</body>
+</html>
+
+<!-- templates/email/password_reset_email.txt -->
+Password Reset Request
+
+Hi {{ user.username }},
+
+You requested to reset your password. Please click the link below to set a new password:
+
+{{ reset_url }}
+
+This link will expire in {{ expiry_hours }} hour.
+
+If you didn't request this reset, please ignore this email.
