@@ -48,36 +48,39 @@ class UserLoginView(APIView):
     def post(self, request):
         serializer = UserLoginSerializer(data=request.data)
         
-        if serializer.is_valid():
-            email = serializer.validated_data['email']
-            password = serializer.validated_data['password']
-            
-            user = authenticate(request, email=email, password=password)
-            
-            if user:
-                # Check for account lockout
-                if user.is_account_locked():
-                    return Response({
-                        'error': 'Account is temporarily locked. Please try again later.'
-                    }, status=status.HTTP_403_FORBIDDEN)
-                
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        email = serializer.validated_data['email']
+        password = serializer.validated_data['password']
+
+        try:
+            user = User.objects.get(email=email)
+
+            # Check for account lockout first
+            if user.check_account_locked():
+                return Response({
+                    'error': 'Account is temporarily locked. Please try again later.'
+                }, status=status.HTTP_403_FORBIDDEN)
+
+            # Authenticate user
+            authenticated_user = authenticate(request, email=email, password=password)
+
+            if authenticated_user:
                 # Reset failed login attempts on successful login
                 user.failed_login_attempts = 0
                 user.save(update_fields=['failed_login_attempts'])
-                
+
                 # Generate JWT tokens
-                refresh = RefreshToken.for_user(user)
-                
+                refresh = RefreshToken.for_user(authenticated_user)
                 return Response({
-                    'username': user.username,
-                    'email': user.email ,
+                    'username': authenticated_user.username,
+                    'email': authenticated_user.email,
                     'refresh': str(refresh),
-                    'access': str(refresh.access_token) 
+                    'access': str(refresh.access_token)
                 })
-            
-            # Handle failed login attempt
-            try:
-                user = User.objects.get(email=email)
+            else:
+                # Increment failed login attempts
                 user.failed_login_attempts += 1
                 
                 # Lock account after 5 consecutive failed attempts
@@ -85,14 +88,16 @@ class UserLoginView(APIView):
                     user.lock_account()
                 
                 user.save(update_fields=['failed_login_attempts'])
-            except User.DoesNotExist:
-                pass
-            
+                
+                return Response({
+                    'error': 'the password is wrong . Account will be locked after {} more failed attempts.'.format(5 - user.failed_login_attempts)
+                }, status=status.HTTP_401_UNAUTHORIZED)
+
+        except User.DoesNotExist:
             return Response({
-                'error': 'Invalid credentials'
+                'error': 'the email DoesNotExist  '
             }, status=status.HTTP_401_UNAUTHORIZED)
-        
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+  
 
 class UserLogoutView(APIView):
     permission_classes = [IsAuthenticated]
@@ -107,7 +112,7 @@ class UserLogoutView(APIView):
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
+ 
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
 

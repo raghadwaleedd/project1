@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 import uuid
 from rest_framework_simplejwt.tokens import RefreshToken 
-
+from datetime import timedelta
 
 
 
@@ -164,7 +164,7 @@ class CustomUser(AbstractUser):
     
     
     api_key = models.UUIDField(default=uuid.uuid4, null=True, blank=True)
-
+    is_account_locked = models.BooleanField(default=False, null=True, blank=True)
 
 
 
@@ -181,6 +181,25 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return f"{self.email} ({self.get_full_name() or self.username})"
 
+    def lock_account(self):
+        """Lock the user's account."""
+        self.is_account_locked = True
+        self.save(update_fields=['is_account_locked'])  
+        
+    def unlock_account(self):
+        """Unlock the user's account."""
+        self.is_account_locked = False
+        self.failed_login_attempts = 0
+        self.save(update_fields=['is_account_locked', 'failed_login_attempts']) 
+        
+    
+    def check_account_locked(self):
+        """Check if the account is locked."""
+        return self.is_account_locked 
+         
+    
+        
+        
     class Meta:
         verbose_name = _('user')
         verbose_name_plural = _('users')

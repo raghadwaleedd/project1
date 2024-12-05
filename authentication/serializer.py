@@ -93,12 +93,12 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
            # Validate that first_name and last_name are not empty
         if not attrs.get('first_name'):
             raise serializers.ValidationError(
-                {"first_name": "First name is required."}
+                {"first_name": "make a space between the first and last name."}
             )
         
         if not attrs.get('last_name'):
             raise serializers.ValidationError(
-                {"last_name": "Last name is required."}
+                {"last_name": "make a space between the first and last name."}
             )
         return attrs
 
