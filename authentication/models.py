@@ -69,28 +69,7 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(email, username, password, **extra_fields)
 
-    def create_social_user(self, email, provider, **extra_fields):
-        """
-        Create a user for social authentication.
-        """
-        username = extra_fields.pop('username', self.generate_unique_username(email))
-        extra_fields['auth_provider'] = provider
-        extra_fields['is_verified'] = True
-        return self.create_user(email, username, None, **extra_fields)
-
-    def generate_unique_username(self, email):
-        """
-        Generate a unique username based on email.
-        """
-        username = email.split('@')[0]
-        if not self.model.objects.filter(username=username).exists():
-            return username
-        
-        # If username exists, append a number
-        i = 1
-        while self.model.objects.filter(username=f"{username}{i}").exists():
-            i += 1
-        return f"{username}{i}"
+    
 
 class CustomUser(AbstractUser):  
     objects = CustomUserManager() 
@@ -113,7 +92,7 @@ class CustomUser(AbstractUser):
     
     # Subscription and premium status
     is_premium = models.BooleanField(default=False)
-    subscription_start = models.DateTimeField(null=True, blank=True)
+    subscription_start = models.DateTimeField(auto_now_add=True ,null=True, blank=True)
     subscription_end = models.DateTimeField(null=True, blank=True) 
     
     
@@ -140,7 +119,6 @@ class CustomUser(AbstractUser):
     ROLE_CHOICES = [
         ('user', _('User')),
         ('admin', _('Admin')),
-        ('moderator', _('Moderator')),  
     ]
     role = models.CharField(
         max_length=10,
@@ -173,20 +151,18 @@ class CustomUser(AbstractUser):
         choices=THEME_CHOICES,
         default='light'
     )
-    notifications_enabled = models.BooleanField(default=True)
-
-
-
-    # Track user's ast activitly
-    last_activity = models.DateTimeField(auto_now=True) 
-    is_verified = models.BooleanField(default=False)  
-    last_login_ip = models.GenericIPAddressField(null=True, blank=True)   
-    registration_ip = models.GenericIPAddressField(null=True, blank=True)  # Added registration IP
-    failed_login_attempts = models.PositiveIntegerField(default=0)  # Added login attempts tracking
-    account_locked_until = models.DateTimeField(null=True, blank=True)  # Added account lockout
     
-    #limit
-    daily_search_limit = models.PositiveIntegerField(default=100)
+
+
+
+    
+    is_verified = models.BooleanField(default=False) #Tracks whether user has completed email verification 
+    last_login_ip = models.GenericIPAddressField(null=True, blank=True) #Stores IP address of user's most recent login 
+    registration_ip = models.GenericIPAddressField(null=True, blank=True)  # Captures IP address when user initially registers
+    failed_login_attempts = models.PositiveIntegerField(default=0)  # Added login attempts tracking
+    
+    
+    
     api_key = models.UUIDField(default=uuid.uuid4, null=True, blank=True)
 
 
@@ -211,52 +187,13 @@ class CustomUser(AbstractUser):
         
         indexes = [
             models.Index(fields=['email']),
-            models.Index(fields=['last_activity']),
             models.Index(fields=['username']),
 
         ]
 
 
 
-    def is_active_subscription(self):
-        """Check if user has an active subscription."""
-        if self.is_premium and self.subscription_end:
-            return self.subscription_end > timezone.now()
-        return False
-
-
-    def get_subscription_days_remaining(self):
-        """Get remaining days in subscription."""
-        if self.is_active_subscription():
-            delta = self.subscription_end - timezone.now()
-            return max(0, delta.days)
-        return 0
-
-    def can_perform_search(self):
-        """Check if user can perform a search based on limits."""
-        return self.search_count < self.daily_search_limit
-
-    def increment_search_count(self):
-        """Increment the search counter."""
-        self.search_count += 1
-        self.save(update_fields=['search_count'])
-
-    def reset_search_count(self):
-        """Reset daily search count."""
-        self.search_count = 0
-        self.save(update_fields=['search_count'])
-
-    def lock_account(self, duration_minutes=30):
-        """Lock account for specified duration."""
-        self.account_locked_until = timezone.now() + timezone.timedelta(minutes=duration_minutes)
-        self.save(update_fields=['account_locked_until'])
-
-    def is_account_locked(self):
-        """Check if account is currently locked."""
-        if self.account_locked_until:
-            return self.account_locked_until > timezone.now()
-        return False
-
+      
     @property
     def full_name(self):
         """Return the full name, with a fallback to username."""
