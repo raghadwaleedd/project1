@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from authentication.models import CustomUser 
 from django.core.exceptions import ValidationError
+from transformers import GPT2Tokenizer
 from django.conf import settings
 import uuid
 
@@ -39,6 +40,8 @@ class ChatSession(models.Model):
       
     query_count = models.PositiveIntegerField(default=0) 
     
+    average_response_time = models.FloatField(null=True, blank=True)
+    total_interaction_time = models.DurationField(null=True, blank=True)
     
     class Meta:
         verbose_name = "Chat Session"
@@ -116,6 +119,7 @@ class Search(models.Model):
         default=OutputType.TEXT
     )
     
+    error_occurred = models.BooleanField(default=False) 
     query_text = models.TextField(null=True, blank=True) 
     response_text = models.TextField(null=True, blank=True)  # Full LLM response text
    
@@ -123,9 +127,14 @@ class Search(models.Model):
     query_time = models.DateTimeField(auto_now_add=True)  # Timestamp for each search 
     response_time = models.DurationField(null=True, blank=True)  # Time taken to generate response
     
-     
-       
+    """ Tokens are:
 
+       Basic units of text the model processes
+       Roughly equivalent to word parts or characters
+       Used to determine the complexity and cost of processing a query  """
+       
+    token_input_count = models.IntegerField(default=0) # Short query "Hello" might use 2-3 tokens
+    token_output_count = models.IntegerField(default=0) 
     class Meta: 
         
         ordering = ["-query_time"] 
@@ -156,7 +165,17 @@ class Search(models.Model):
        
     def save(self, *args, **kwargs): 
         
-         
+        # Use a tokenizer to count tokens before saving
+        tokenizer = GPT2Tokenizer.from_pretrained('gpt2') 
+        
+         # Count input tokens
+        if self.query_text:
+            self.input_token_count = len(tokenizer.encode(self.query_text))
+        
+        # Count output tokens
+        if self.response_text:
+            self.output_token_count = len(tokenizer.encode(self.response_text)) 
+            
         """Override save to enforce limits.""" 
         user = self.session.user
 
@@ -184,6 +203,8 @@ class Search(models.Model):
     def __str__(self):
         return f"Search by {self.user.email} at {self.query_time}"
 
+    def total_token_count(self):
+        return self.input_token_count + self.output_token_count 
         
     def get_summary(self):
         """Returns a truncated version of the query text for display."""
