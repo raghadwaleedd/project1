@@ -122,6 +122,9 @@ class Search(models.Model):
     
     query_time = models.DateTimeField(auto_now_add=True)  # Timestamp for each search 
     response_time = models.DurationField(null=True, blank=True)  # Time taken to generate response
+    
+     
+       
 
     class Meta: 
         
