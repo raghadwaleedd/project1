@@ -30,7 +30,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS = [  
+INSTALLED_APPS = [               
     'corsheaders'  ,
     'django_extensions',            
     'rest_framework.authtoken',            
@@ -55,13 +55,14 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google", 
     "social_django" , 
     "oauth2_provider" ,
+    
 ]
 SITE_ID = 1  
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_EMAIL_REQUIRED = True
 LOGIN_REDIRECT_URL = "/"
 
-MIDDLEWARE = [
+MIDDLEWARE = [ 
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -93,6 +94,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "core.wsgi.application"
+
+
+
 
 
 # Database
@@ -140,8 +144,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = "static/"
-STATIC_ROOT = os.path.join (BASE_DIR , 'static')
+
+STATIC_URL = "/static/" 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),  # Your project-level static files directory
+]
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 

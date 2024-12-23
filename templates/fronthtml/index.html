@@ -1,0 +1,211 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> ecosystem</title> 
+    <link rel="icon" type="image/png" href="static\vector.png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/Home.css' %}">
+</head>
+<body class="min-h-screen gradient-bg text-white overflow-x-hidden">  
+
+  
+    <!-- Navbar with enhanced glass effect -->
+    <nav class="fixed w-full z-50 glass-effect rotating-gradient">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3 group">
+                    <i data-lucide="brain" class="w-8 h-8 text-blue-400 transform group-hover:rotate-180 transition-transform duration-700"></i>
+                    <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 animate-pulse flex items-center gap-2">  
+                        <img src="{% static 'vector.png' %}" alt="Logo" class="h-11 inline-block">
+                        ecosystem
+                    </span>
+                </div>
+                <div class="flex space-x-8">
+                    <a href="#features" class="hover:text-blue-400 transition-all duration-300 hover:scale-110">Features</a>
+                    <a href="#about" class="hover:text-blue-400 transition-all duration-300 hover:scale-110">About</a>
+                    <button class="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-2 rounded-lg hover:opacity-90 transform hover:scale-105 transition-all duration-300 animate-pulse">
+                        Try Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section with enhanced animations -->
+    <header class="container mx-auto px-6 pt-32 pb-16">
+        <div class="flex items-center justify-between">
+            <div class="w-1/2 pr-12 animate-slide-up">
+                <div class="space-y-6">
+                    <h1 class="text-7xl font-bold mb-6 leading-tight">
+                        <span class="block bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 animate-pulse"> 
+                            <img src="{% static 'vector.png' %}" alt="Logo" class="h-12 inline-block">
+                            Advanced AI
+                        </span>
+                        <span class="typing-effect">Language Model </span>
+                    </h1>
+                    <p class="text-xl text-gray-300 leading-relaxed reveal">
+                        Experience the next evolution in ecosystem with our cutting-edge language model.
+                        Powered by advanced neural networks and trained on diverse datasets.
+                    </p>
+                    <div class="flex space-x-6 pt-4 reveal"> 
+                      <a href="{% url 'login_signup' %}">
+                        <button class="group bg-gradient-to-r from-blue-500 to-purple-600 px-8 py-4 rounded-lg flex items-center space-x-3 hover:opacity-90 transform hover:scale-105 transition-all duration-300 animate-pulse">
+                            <span>Get Started</span>
+                            <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-4 transition-transform duration-500"></i>
+                        </button>
+                      </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-1/2">
+                <div class="relative w-full max-w-lg mx-auto">
+                    <!-- Floating chat window with enhanced animations -->
+                    <div class="animate-float glass-effect rounded-2xl p-6 animate-glow rotating-gradient">
+                        <div class="flex items-center space-x-2 mb-6">
+                            <div class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500 animate-pulse"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="chat-message bg-gray-700/50 p-4 rounded-lg transform hover:scale-105 transition-transform duration-300">
+                                <p class="typing-effect">How can I assist you today?</p>
+                            </div>
+                            <div class="chat-message bg-blue-500/30 p-4 rounded-lg ml-8 transform hover:scale-105 transition-transform duration-300">
+                                <p>Can you help me with data analysis?</p>
+                            </div>
+                            <div class="chat-message bg-gray-700/50 p-4 rounded-lg transform hover:scale-105 transition-transform duration-300">
+                                <p class="typing-effect">I'll help you analyze your data efficiently.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Enhanced decorative elements -->
+                    <div class="absolute -top-20 -right-20 w-64 h-64 bg-blue-500/10 rounded-full filter blur-3xl animate-pulse"></div>
+                    <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-purple-500/10 rounded-full filter blur-3xl animate-pulse"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Features Section with enhanced animations -->
+    <section id="features" class="container mx-auto px-6 py-24">
+        <h2 class="text-5xl font-bold mb-16 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 animate-pulse reveal">
+            Powerful Features
+        </h2>
+        <div class="grid grid-cols-3 gap-8">
+            <div class="feature-card glass-effect p-8 rounded-xl animate-slide-up rotating-gradient">
+                <i data-lucide="message-square" class="w-12 h-12 text-blue-400 mb-6 animate-wave"></i>
+                <h3 class="text-2xl font-bold mb-4">Natural Conversations</h3>
+                <p class="text-gray-300 leading-relaxed">
+                    Experience human-like interactions with advanced context understanding and natural language processing.
+                </p>
+            </div>
+            <div class="feature-card glass-effect p-8 rounded-xl animate-slide-up rotating-gradient">
+                <i data-lucide="code" class="w-12 h-12 text-purple-400 mb-6 animate-wave"></i>
+                <h3 class="text-2xl font-bold mb-4">Advanced Coding</h3>
+                <p class="text-gray-300 leading-relaxed">
+                    Get expert assistance with code generation, debugging, and optimization across multiple languages.
+                </p>
+            </div>
+            <div class="feature-card glass-effect p-8 rounded-xl animate-slide-up rotating-gradient">
+                <i data-lucide="brain" class="w-12 h-12 text-pink-400 mb-6 animate-wave"></i>
+                <h3 class="text-2xl font-bold mb-4">Deep Learning</h3>
+                <p class="text-gray-300 leading-relaxed">
+                    Powered by state-of-the-art neural networks for superior understanding and response generation.
+                </p>
+            </div>
+        </div>
+    </section> 
+    <section id="about" class="container mx-auto px-6 py-24">
+        <h2 class="text-5xl font-bold mb-16 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 animate-pulse reveal">
+            About Us
+        </h2>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="animate-slide-up">
+                <h3 class="text-3xl font-bold mb-6">Our Mission</h3>
+                <p class="text-gray-300 leading-relaxed mb-8">
+                    We're dedicated to making artificial intelligence accessible and beneficial for everyone. Our team of experts works tirelessly to develop cutting-edge AI solutions that enhance human capabilities and drive innovation.
+                </p>
+                <div class="flex space-x-6">
+                    <div class="glass-effect p-4 rounded-lg">
+                        <h4 class="text-2xl font-bold text-blue-400">500K+</h4>
+                        <p class="text-gray-400">Active Users</p>
+                    </div>
+                    <div class="glass-effect p-4 rounded-lg">
+                        <h4 class="text-2xl font-bold text-purple-400">98%</h4>
+                        <p class="text-gray-400">Satisfaction Rate</p>
+                    </div>
+                    <div class="glass-effect p-4 rounded-lg">
+                        <h4 class="text-2xl font-bold text-pink-400">24/7</h4>
+                        <p class="text-gray-400">Support</p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+     <!-- Footer -->
+    <footer class="glass-effect mt-24 border-t border-white/10">
+        <div class="container mx-auto px-6 py-12">
+            <div class="grid grid-cols-4 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i data-lucide="brain" class="w-8 h-8 text-blue-400"></i>
+                        <span class="text-xl font-bold">AI Assistant</span>
+                    </div>
+                    <p class="text-gray-400">
+                        Empowering the future through artificial intelligence and innovative solutions.
+                    </p>
+                </div>
+                <div>
+                    <h5 class="font-bold mb-6">Quick Links</h5>
+                    <ul class="space-y-4 text-gray-400">
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Home</a></li>
+                        <li><a href="#features" class="hover:text-blue-400 transition-colors">Features</a></li>
+                        <li><a href="#about" class="hover:text-blue-400 transition-colors">About</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold mb-6">Resources</h5>
+                    <ul class="space-y-4 text-gray-400">
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Documentation</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">API Reference</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Support</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold mb-6">Connect</h5>
+                    <div class="flex space-x-4">
+                        <a href="#" class="social-icon">
+                            <i data-lucide="twitter" class="w-6 h-6"></i>
+                        </a>
+                        <a href="#" class="social-icon">
+                            <i data-lucide="github" class="w-6 h-6"></i>
+                        </a>
+                        <a href="#" class="social-icon">
+                            <i data-lucide="linkedin" class="w-6 h-6"></i>
+                        </a>
+                        <a href="#" class="social-icon">
+                            <i data-lucide="instagram" class="w-6 h-6"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-white/10 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 AI Assistant. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
+    <script src="{% static 'js/index.js' %}"></script>
+  
+</body>
+</html> 
+

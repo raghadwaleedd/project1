@@ -24,15 +24,16 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     
     email = serializers.EmailField(
         required=True,
-        validators=[UniqueValidator(queryset=User.objects.all())]
+        
     )
     
     username = serializers.CharField(
         required=True,
-        validators=[UniqueValidator(queryset=User.objects.all())]
+        
     )
     
-    
+    first_name = serializers.CharField(required=False, allow_blank=True)
+    last_name = serializers.CharField(required=False, allow_blank=True)
     class Meta:
         model = User
         fields = [

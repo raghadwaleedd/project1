@@ -1,0 +1,210 @@
+ 
+.container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 5% !important;
+    padding-right: 5% !important;
+}
+body, html {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    width: 100%;
+    overflow-x: hidden;
+}
+   
+.carousel-container {
+    opacity: 0;
+    transition: opacity 0.5s;
+ }
+ 
+ .carousel-container.loaded {
+    opacity: 1;
+ }
+ 
+ .chat-slide {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.5s;
+ }
+ 
+ .chat-slide.active {
+   display: block;
+   opacity: 1;
+ }
+ 
+ .indicator {
+    width: 100%;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #4B5563;
+    transition: background-color 0.3s;
+ }
+ 
+ .indicator.active {
+   background-color: #3B82F6;
+ }
+ /* Enhanced Animation Keyframes with Longer Durations */
+ @keyframes float {
+     0% { transform: translateY(0px) rotate(0deg); }
+     25% { transform: translateY(-15px) rotate(-2deg); }
+     50% { transform: translateY(0px) rotate(0deg); }
+     75% { transform: translateY(-15px) rotate(2deg); }
+     100% { transform: translateY(0px) rotate(0deg); }
+ }
+ 
+ @keyframes pulse-glow {
+     0% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+     25% { box-shadow: 0 0 40px rgba(44, 56, 165, 0.5); }
+     50% { box-shadow: 0 0 60px rgba(21, 62, 172, 0.7); }
+     75% { box-shadow: 0 0 40px rgba(44, 56, 165, 0.5); }
+     100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+ }
+ 
+ @keyframes typing {
+     from { width: 0 }
+     to { width: 100% }
+ }
+ 
+ @keyframes blink {
+     50% { border-color: transparent }
+ }
+ 
+ @keyframes slide-up {
+     from { transform: translateY(100px); opacity: 0; }
+     to { transform: translateY(0); opacity: 1; }
+ }
+ 
+ @keyframes rotate-gradient {
+     0% { transform: rotate(0deg); }
+     100% { transform: rotate(360deg); }
+ }
+ 
+ @keyframes bubble {
+     0%, 100% { transform: scale(1); }
+     50% { transform: scale(1.1); }
+ }
+ 
+ @keyframes wave {
+     0% { transform: translateX(0) translateY(0); }
+     25% { transform: translateX(-5px) translateY(-5px); }
+     50% { transform: translateX(0) translateY(0); }
+     75% { transform: translateX(5px) translateY(-5px); }
+     100% { transform: translateX(0) translateY(0); }
+ }
+ 
+ /* Applied Animation Classes with Increased Durations */
+ .animate-float {
+     animation: float 12s ease-in-out infinite;
+ }
+ 
+ .animate-glow {
+     animation: pulse-glow 8s ease-in-out infinite;
+ }
+ 
+ .animate-slide-up {
+     animation: slide-up 2s ease-out forwards;
+     opacity: 0;
+ }
+ 
+ .animate-bubble {
+     animation: bubble 4s ease-in-out infinite;
+ }
+ 
+ .animate-wave {
+     animation: wave 5s ease-in-out infinite;
+ }
+ 
+ .typing-effect {
+     overflow: hidden;
+     white-space: nowrap;
+     border-right: 3px solid white;
+     animation: 
+         typing 5s steps(40, end),
+         blink 1s step-end infinite;
+ }
+ 
+ .gradient-bg {
+     background: linear-gradient(135deg, #1a202c 0%, #2d3748 60%, #1a202c 100%);
+     background-size: 400% 400%;
+     animation: gradient 20s ease infinite;
+ }
+ 
+ .rotating-gradient::before {
+     content: '';
+     position: absolute;
+     top: -150%;
+     left: -150%;
+     width: 400%;
+     height: 400%;
+     background: conic-gradient(
+         from 0deg,
+         rgba(59, 130, 246, 0.1),
+         rgba(27, 34, 222, 0.1),
+         rgba(25, 40, 99, 0.1),
+         rgba(59, 130, 246, 0.1)
+     );
+     animation: rotate-gradient 20s linear infinite;
+ }
+ 
+ .glass-effect {
+     background: rgba(255, 255, 255, 0.05);
+     backdrop-filter: blur(10px);
+     border: 1px solid rgba(255, 255, 255, 0.1);
+     position: relative;
+     overflow: hidden;
+ }
+ 
+ .feature-card {
+     transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+ }
+ 
+ .feature-card:hover {
+     transform: translateY(-10px) scale(1.02);
+     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+ }
+ 
+ .feature-card:hover i {
+     animation: wave 3s ease-in-out infinite;
+ }
+ 
+ /* Staggered animation delays for features */
+ .feature-card:nth-child(1) { animation-delay: 0.4s; }
+ .feature-card:nth-child(2) { animation-delay: 0.8s; }
+ .feature-card:nth-child(3) { animation-delay: 1.2s; }
+ 
+ /* Chat message animation with longer delays */
+ .chat-message {
+     opacity: 0;
+     transform: translateX(-20px);
+     animation: message-appear 1s ease forwards;
+ }
+ 
+ @keyframes message-appear {
+     to {
+         opacity: 1;
+         transform: translateX(0);
+     }
+ }
+ 
+ .chat-message:nth-child(1) { animation-delay: 1s; }
+ .chat-message:nth-child(2) { animation-delay: 3s; }
+ .chat-message:nth-child(3) { animation-delay: 5s; }  
+ 
+ /* New animations for About Us section */
+ .team-card {
+     transition: all 0.5s ease;
+ }
+ 
+ .team-card:hover {
+     transform: translateY(-10px);
+ }
+ 
+ .social-icon {
+     transition: all 0.3s ease;
+ }
+ 
+ .social-icon:hover {
+     transform: scale(1.2);
+     color: #60A5FA;
+ }

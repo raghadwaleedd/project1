@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -9,15 +9,15 @@ from social_core.exceptions import MissingBackend, AuthTokenError
 from requests.exceptions import HTTPError
 from . serializer import * 
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import authenticate
-from django.conf import settings
+from django.contrib.auth import authenticate 
+from django.conf import settings 
 from rest_framework.decorators import throttle_classes
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle  
 import jwt 
 import logging 
 from .utils import * 
-
-
+from django.shortcuts import redirect
+from django.contrib import messages
 
 class UserRegistrationView(APIView):
     permission_classes = [AllowAny]
@@ -30,17 +30,11 @@ class UserRegistrationView(APIView):
             # Generate JWT tokens
             refresh = RefreshToken.for_user(user)
             
-            return Response({
-        
-                'id': user.id,
-                'username': user.username,
-                'email': user.email ,
-                'refresh': str(refresh),
-                'access': str(refresh.access_token) 
-                
-            }, status=status.HTTP_201_CREATED)
+            return Response({"message": "User registered successfully."}, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+   
 
 class UserLoginView(APIView):
     permission_classes = [AllowAny]
@@ -72,13 +66,8 @@ class UserLoginView(APIView):
                 user.save(update_fields=['failed_login_attempts'])
 
                 # Generate JWT tokens
-                refresh = RefreshToken.for_user(authenticated_user)
-                return Response({
-                    'username': authenticated_user.username,
-                    'email': authenticated_user.email,
-                    'refresh': str(refresh),
-                    'access': str(refresh.access_token)
-                })
+                refresh = RefreshToken.for_user(authenticated_user) 
+                return Response({'success': True}, status=status.HTTP_200_OK)
             else:
                 # Increment failed login attempts
                 user.failed_login_attempts += 1
@@ -90,12 +79,12 @@ class UserLoginView(APIView):
                 user.save(update_fields=['failed_login_attempts'])
                 
                 return Response({
-                    'error': 'the password is wrong . Account will be locked after {} more failed attempts.'.format(5 - user.failed_login_attempts)
+                    'error': 'Invalid login credentials. Please try again '
                 }, status=status.HTTP_401_UNAUTHORIZED)
 
         except User.DoesNotExist:
             return Response({
-                'error': 'the email DoesNotExist  '
+                'error': 'Invalid login credentials. Please try again '
             }, status=status.HTTP_401_UNAUTHORIZED)
   
 
