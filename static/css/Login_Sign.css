@@ -37,15 +37,20 @@
   .container span {
     font-size: 12px;
   }
-  .logo {
-    width: 66px;
-    margin-bottom: 20px;
-} 
+ 
   .container a {
     color: #333;
     font-size: 13px;
     text-decoration: none;
     margin: 15px 0 10px;
+  } 
+  .logo {
+    margin-right: 4px; /* Add space between the icon and the word */
+    width: 66px; /* Adjust the size of the icon */
+    height: auto; /* Maintain aspect ratio */ 
+    display: inline-block; 
+    vertical-align: bottom; 
+    margin-bottom: 20px;
   }
   .container button {
     background: linear-gradient(180deg, #1342bb 0%, #234682 100%);
@@ -226,6 +231,21 @@
     background-color: #e1e1e1;
 } 
 
+.container-a {
+  display: flex; /* Use flexbox to align items in a row */
+  align-items: center; /* Vertically center-align the items */ 
+  justify-content: flex-start; 
+  width: 50%;
+} 
 
+.ecosystem-text {
+  color: #c4d4e8; /* Green text */ 
+  font-family: 'Quicksand', sans-serif;
+  font-weight: bolder; /* Make it bold */
+  font-size: 5vw;
+  letter-spacing: 2px;
+  text-transform: lowercase; 
+  height: 50% ;
+}
 
 

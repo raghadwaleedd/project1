@@ -161,15 +161,26 @@ document.addEventListener('DOMContentLoaded', function() {
             input.style.borderColor = 'red';
         }
     }
-    
-    // Function to display multiple field errors
     function displayErrors(form, errors) {
         for (const [field, errorMessages] of Object.entries(errors)) {
-            if (field !== 'error') {  // Skip the general error field
-                displayFieldError(form, field, Array.isArray(errorMessages) ? errorMessages[0] : errorMessages);
+            if (field !== 'error') {
+                const message = Array.isArray(errorMessages) ? 
+                    errorMessages[0] : 
+                    (typeof errorMessages === 'object' ? 
+                        Object.values(errorMessages)[0] : 
+                        errorMessages);
+                displayFieldError(form, field, message);
             }
         }
     }
+       // Function to display multiple field errors
+      //function displayErrors(form, errors) {
+      //  for (const [field, errorMessages] of Object.entries(errors)) {
+       //     if (field !== 'error') {  // Skip the general error field
+        //        displayFieldError(form, field, Array.isArray(errorMessages) ? errorMessages[0] : errorMessages);
+       //     }
+       // }
+      // }
     
     // Function to display general error message
     function displayGeneralError(form, message) {

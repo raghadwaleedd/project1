@@ -74,7 +74,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         if User.objects.filter(username=value).exists():
             raise serializers.ValidationError(_("A user with this username already exists."))
         return value
-     
+    
+    
+        
      
     def validate(self, attrs):
         # Check if passwords match
@@ -84,14 +86,24 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             ) 
             
         
+        if 'username' in attrs and ' ' not in attrs['username']:
+         raise serializers.ValidationError({
+             "username": "make a space between the first and last name."
+         }) 
+         
+         
         if 'username' in attrs and (not attrs.get('first_name') or not attrs.get('last_name')):
             first_name, last_name = self.extract_names(attrs['username'])
             attrs['first_name'] = attrs.get('first_name', first_name)
-            attrs['last_name'] = attrs.get('last_name', last_name)   
+            attrs['last_name'] = attrs.get('last_name', last_name)  
+        
             
-            
-              
-           # Validate that first_name and last_name are not empty
+        if 'username' in attrs and ' ' not in attrs['username']:
+         raise serializers.ValidationError({
+             "username": "make a space between the first and last name."
+         })  
+             
+         # Validate that first_name and last_name are not empty
         if not attrs.get('first_name'):
             raise serializers.ValidationError(
                 {"first_name": "make a space between the first and last name."}
@@ -100,9 +112,15 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         if not attrs.get('last_name'):
             raise serializers.ValidationError(
                 {"last_name": "make a space between the first and last name."}
-            )
+            ) 
+            
+        
+            
+            
         return attrs
-
+    
+    
+    
     def create(self, validated_data):
         # Remove password2 before creating user
         validated_data.pop('password2')
