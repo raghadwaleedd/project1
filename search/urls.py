@@ -12,7 +12,7 @@ from rest_framework_simplejwt.views import (
 urlpatterns = [
       path('', MyindexView.as_view(), name='index'), 
       path('loginpage/', login_signup_view.as_view(), name='login_signup'),
-      
+      path('search', MysearchView.as_view(), name='search'), 
 
 ] 
 

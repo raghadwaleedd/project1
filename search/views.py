@@ -22,3 +22,12 @@ class login_signup_view(APIView):
     def get(self, request):
           return render(request, 'fronthtml/Login_Sign.Html')     
  
+ 
+ 
+class MysearchView(APIView): 
+    permission_classes = [AllowAny] 
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'fronthtml/search.html'
+  
+    def get(self, request):
+          return render(request, 'fronthtml/search.html') 

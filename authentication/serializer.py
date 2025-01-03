@@ -14,69 +14,46 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         write_only=True, 
         required=True, 
         validators=[validate_password] ,
-        style={'input_type': 'password'} # 
+        style={'input_type': 'password'}  ,
+        
     )
     password2 = serializers.CharField( 
         write_only=True,
         required=True ,
-        style={'input_type': 'password'}  
+        style={'input_type': 'password'} , 
+       
     )
     
-    email = serializers.EmailField(
-        required=True,
-        
-    )
+    email= serializers.EmailField(required=True ,
+          )
+    
+    first_name= serializers.CharField(required=True )
+    last_name= serializers.CharField(required=True )  
     
     username = serializers.CharField(
-        required=True,
+        required=False,
         
     )
-    
-    first_name = serializers.CharField(required=False, allow_blank=True)
-    last_name = serializers.CharField(required=False, allow_blank=True)
     class Meta:
         model = User
         fields = [
-            'email', 
-            'username', 
             'first_name',
-            'last_name', 
+            'last_name',  
+            'email', 
             'password', 
-            'password2',         
+            'password2',   
+            'username', 
+                    
         ] 
-        
+       
          
          
-    
-    def extract_names(self, username):
-        """
-        Extract first and last names from username.
-        Handles single and multiple word names.
-        """
-        parts = username.split()
-        if len(parts) > 1:
-            first_name = parts[0]
-            last_name = ' '.join(parts[1:])
-        else:
-            first_name = username
-            last_name = ''
-        return first_name, last_name
-        
-        
     def validate_email(self, value):
         """Validate email is unique and properly formatted."""
         if User.objects.filter(email=value).exists():
             raise serializers.ValidationError(_("A user with this email already exists."))
-        return value.lower() 
-    
-    def validate_username(self, value):
-        """Validate username is unique and properly formatted."""
-        if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError(_("A user with this username already exists."))
-        return value
-    
-    
-        
+        return value.lower()   
+     
      
     def validate(self, attrs):
         # Check if passwords match
@@ -85,33 +62,16 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
                 {"password": "Password fields didn't match."}
             ) 
             
-        
-        if 'username' in attrs and ' ' not in attrs['username']:
-         raise serializers.ValidationError({
-             "username": "make a space between the first and last name."
-         }) 
-         
-         
-        if 'username' in attrs and (not attrs.get('first_name') or not attrs.get('last_name')):
-            first_name, last_name = self.extract_names(attrs['username'])
-            attrs['first_name'] = attrs.get('first_name', first_name)
-            attrs['last_name'] = attrs.get('last_name', last_name)  
-        
-            
-        if 'username' in attrs and ' ' not in attrs['username']:
-         raise serializers.ValidationError({
-             "username": "make a space between the first and last name."
-         })  
              
          # Validate that first_name and last_name are not empty
         if not attrs.get('first_name'):
             raise serializers.ValidationError(
-                {"first_name": "make a space between the first and last name."}
+                {"first_name": "First name is required."}
             )
         
         if not attrs.get('last_name'):
             raise serializers.ValidationError(
-                {"last_name": "make a space between the first and last name."}
+                {"last_name": "Last name is required."}
             ) 
             
         
@@ -123,19 +83,22 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         # Remove password2 before creating user
-        validated_data.pop('password2')
+        validated_data.pop('password2') 
         
+        username = validated_data.pop('username', None)
+        if not username:
+            username = f"{validated_data['first_name']} {validated_data['last_name']}"
         # Create user
         user = User.objects.create_user(
             email=validated_data['email'],
-            username=validated_data['username'],
+            username=username,
             password=validated_data['password'] ,
             first_name= validated_data["first_name"] ,
             last_name= validated_data["last_name"]
         )
         
        
-        user.save()
+        
         return user
 
 

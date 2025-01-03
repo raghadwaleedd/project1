@@ -26,11 +26,13 @@ class UserRegistrationView(APIView):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            
             # Generate JWT tokens
             refresh = RefreshToken.for_user(user)
             
-            return Response({"message": "User registered successfully."}, status=status.HTTP_201_CREATED)
+            return Response({ 
+                "success": True,
+                "message": "User registered successfully."
+                }, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

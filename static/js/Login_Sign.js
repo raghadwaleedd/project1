@@ -1,7 +1,6 @@
 const container = document.getElementById("container");
 const registerbtn = document.getElementById("register");
 const loginbtn = document.getElementById("login");
-const registrationForm = document.getElementById("registration-form");
 const loginForm = document.getElementById("login-form");
 
 registerbtn.addEventListener("click", () => {
@@ -12,17 +11,68 @@ loginbtn.addEventListener("click", () => {
     container.classList.remove("active");
 });
 
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Registration Form Handler
+    const registrationForm = document.getElementById("registration-form");
+    
     if (registrationForm) {
         registrationForm.addEventListener('submit', handleRegistration);
-    }
+    } 
 
-    // Login Form Handler
     if (loginForm) {
         loginForm.addEventListener('submit', handleLogin);
     }
-
+    async function handleRegistration(e) {
+        e.preventDefault();
+        
+        // Clear any existing error messages
+        clearErrors(registrationForm);
+        
+        // Get form data
+        const formData = new FormData(registrationForm);
+        const data = {
+            first_name: formData.get('first_name').trim(),
+            last_name: formData.get('last_name').trim(),
+            email: formData.get('email').trim(),
+            password: formData.get('password'),
+            password2: formData.get('password2')
+        };
+        
+        try {
+            const response = await fetch("/auth/register/", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok && result.success) {
+                // Handle successful registration
+                displaySuccessMessage(registrationForm, result.message || "Registration successful!");
+                setTimeout(() => {
+                    window.location.href = "http://127.0.0.1:8000/search";  // Redirect to home page after 2 seconds
+                }, 2000);
+                return;
+            }
+            
+            // Handle errors
+            if (!response.ok) {
+                if (result.non_field_errors) {
+                    displayGeneralError(registrationForm, result.non_field_errors[0]);
+                } else {
+                    displayErrors(registrationForm, result);
+                }
+            }
+        } catch (error) {
+            console.error('Error during registration:', error);
+            displayGeneralError(registrationForm, 'An error occurred. Please try again.');
+        }
+    } 
+    
     async function handleLogin(e) {
         e.preventDefault();
         
@@ -50,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (response.ok && result.success) {
                 // Handle successful login
-                window.location.href = "";  // Redirect to index page
+                window.location.href = "http://127.0.0.1:8000/search";  // Redirect to index page
                 return;
             }
             
@@ -76,49 +126,82 @@ document.addEventListener('DOMContentLoaded', function() {
             displayGeneralError(loginForm, 'An error occurred. Please try again.');
         }
     }
-
-    async function handleRegistration(e) {
-        e.preventDefault();
-        
-        // Clear any existing error messages
-        clearErrors(registrationForm);
-        
-        // Get form data
-        const formData = new FormData(registrationForm);
-        const data = {
-            username: formData.get('username'),
-            email: formData.get('email'),
-            password: formData.get('password'),
-            password2: formData.get('password2')
-        };
-        
-        try {
-            const response = await fetch("/auth/register/", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken')
-                },
-                body: JSON.stringify(data)
-            });
+    // Function to display field-specific error message
+    function displayFieldError(form, field, message) {
+        const input = form.querySelector(`[name="${field}"]`);
+        if (input) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.style.color = 'red';
+            errorDiv.style.fontSize = '12px';
+            errorDiv.style.marginTop = '5px';
+            errorDiv.textContent = typeof message === 'string' ? message : message[0];
             
-            const result = await response.json();
-            
-            if (!response.ok) {
-                displayErrors(registrationForm, result);
-                
-                if (result.non_field_errors) {
-                    displayGeneralError(registrationForm, result.non_field_errors[0]);
-                }
-            } else {
-                displaySuccessMessage(registrationForm, "User registered successfully.");
-                setTimeout(() => {
-                    window.location.href = "";
-                }, 2000);
+            // Remove any existing error message for this field
+            const existingError = input.parentNode.querySelector('.error-message');
+            if (existingError) {
+                existingError.remove();
             }
-        } catch (error) {
-            displayGeneralError(registrationForm, 'An error occurred. Please try again.');
+            
+            // Add error message after the input field
+            input.parentNode.insertBefore(errorDiv, input.nextSibling);
+            input.style.borderColor = 'red';
         }
+    }
+
+    // Function to display multiple field errors
+    function displayErrors(form, errors) {
+        Object.entries(errors).forEach(([field, messages]) => {
+            if (field !== 'non_field_errors') {
+                const message = Array.isArray(messages) ? messages[0] : messages;
+                displayFieldError(form, field, message);
+            }
+        });
+    }
+
+    // Function to display general error message at the top of the form
+    function displayGeneralError(form, message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message general-error';
+        errorDiv.style.color = 'red';
+        errorDiv.style.marginBottom = '10px';
+        errorDiv.style.textAlign = 'center';
+        errorDiv.textContent = message;
+        
+        // Remove any existing general error
+        const existingError = form.querySelector('.general-error');
+        if (existingError) {
+            existingError.remove();
+        }
+        
+        form.insertBefore(errorDiv, form.firstChild);
+    }
+
+    // Function to display success message
+    function displaySuccessMessage(form, message) {
+        const successDiv = document.createElement('div');
+        successDiv.className = 'success-message';
+        successDiv.style.color = 'green';
+        successDiv.style.marginBottom = '10px';
+        successDiv.style.textAlign = 'center';
+        successDiv.textContent = message;
+        
+        // Remove any existing success message
+        const existingSuccess = form.querySelector('.success-message');
+        if (existingSuccess) {
+            existingSuccess.remove();
+        }
+        
+        form.insertBefore(successDiv, form.firstChild);
+    }
+
+    // Function to clear all error messages
+    function clearErrors(form) {
+        const errorMessages = form.querySelectorAll('.error-message, .success-message');
+        errorMessages.forEach(error => error.remove());
+        
+        const inputs = form.querySelectorAll('input');
+        inputs.forEach(input => input.style.borderColor = '');
     }
 
     // Helper function to get CSRF token
@@ -136,93 +219,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return cookieValue;
     }
-
-    // Function to display field-specific error message
-    function displayFieldError(form, field, message) {
-        const input = form.querySelector(`[name="${field}"]`);
-        if (input) {
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error-message';
-            errorDiv.style.color = 'red';
-            errorDiv.style.fontSize = '12px';
-            errorDiv.style.marginTop = '5px';
-            errorDiv.textContent = message;
-            
-            // Remove any existing error message
-            const existingError = input.parentNode.querySelector('.error-message');
-            if (existingError) {
-                existingError.remove();
-            }
-            
-            // Insert error message after the input field
-            input.parentNode.insertBefore(errorDiv, input.nextSibling);
-            
-            // Add red border to input field
-            input.style.borderColor = 'red';
-        }
-    }
-    function displayErrors(form, errors) {
-        for (const [field, errorMessages] of Object.entries(errors)) {
-            if (field !== 'error') {
-                const message = Array.isArray(errorMessages) ? 
-                    errorMessages[0] : 
-                    (typeof errorMessages === 'object' ? 
-                        Object.values(errorMessages)[0] : 
-                        errorMessages);
-                displayFieldError(form, field, message);
-            }
-        }
-    }
-       // Function to display multiple field errors
-      //function displayErrors(form, errors) {
-      //  for (const [field, errorMessages] of Object.entries(errors)) {
-       //     if (field !== 'error') {  // Skip the general error field
-        //        displayFieldError(form, field, Array.isArray(errorMessages) ? errorMessages[0] : errorMessages);
-       //     }
-       // }
-      // }
-    
-    // Function to display general error message
-    function displayGeneralError(form, message) {
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'error-message general-error';
-        errorDiv.style.color = 'red';
-        errorDiv.style.marginBottom = '10px';
-        errorDiv.style.textAlign = 'center';
-        errorDiv.textContent = message;
-        
-        // Remove any existing general error
-        const existingError = form.querySelector('.general-error');
-        if (existingError) {
-            existingError.remove();
-        }
-        
-        form.insertBefore(errorDiv, form.firstChild);
-    }
-    
-    // Function to display success message
-    function displaySuccessMessage(form, message) {
-        const successDiv = document.createElement('div');
-        successDiv.className = 'success-message';
-        successDiv.style.color = 'green';
-        successDiv.style.marginBottom = '10px';
-        successDiv.style.textAlign = 'center';
-        successDiv.textContent = message;
-        
-        form.insertBefore(successDiv, form.firstChild);
-    }
-    
-    // Function to clear all error messages
-    function clearErrors(form) {
-        // Remove all error message elements
-        const errorMessages = form.querySelectorAll('.error-message, .success-message');
-        errorMessages.forEach(error => error.remove());
-        
-        // Reset input field borders
-        const inputs = form.querySelectorAll('input');
-        inputs.forEach(input => input.style.borderColor = '');
-    }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

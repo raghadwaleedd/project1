@@ -28,11 +28,11 @@
           {% csrf_token %}
           <h1 style="color: #1d3557;">Create Account</h1>
           <span style="color: #1d3557;">or use email for registration</span>
-          <input type="text" name="username" placeholder="Name : make a space between the first and last name " required/>
-          <input type="text" name="email" placeholder="Email" required/>
+          <input type="text" name="first_name" placeholder="First Name" required/>
+          <input type="text" name="last_name" placeholder="Last Name" required/>
+          <input type="email" name="email" placeholder="Email" required/>
           <input type="password" name="password" placeholder="Password" required/>
           <input type="password" name="password2" placeholder="Confirm Password" required/>
-    
           <button type="submit">Sign Up</button>
           <a href="{% url 'index' %}" class="back-to-home">Back to Home</a>
         </form>
@@ -42,7 +42,7 @@
           {% csrf_token %}
           <h1 style=" color: #1d3557;">Sign In</h1>
           <span style=" color: #1d3557;">or use email password</span>
-          <input type="text" name="email" placeholder="Email" required />
+          <input type="email" name="email" placeholder="Email" required/>
           <input type="password" name="password" placeholder="Password" required/>            
           <a href="#">Forgot password</a>
           <button type="submit">Sign In</button>
