@@ -1,0 +1,41 @@
+/* rating_system.css - Additional styles to complement Tailwind */
+
+/* Star animation on hover */
+.stars-container .star-btn:hover svg,
+.stars-container .star-btn:hover ~ .star-btn svg {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+}
+
+/* Popup animation */
+#rating-popup {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Word count indicator */
+.word-count {
+    font-size: 0.75rem;
+    color: #6b7280;
+    text-align: right;
+    margin-top: -0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.word-count.warning {
+    color: #f59e0b;
+}
+
+.word-count.error {
+    color: #ef4444;
+}

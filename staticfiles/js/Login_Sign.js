@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Handle successful registration
                 displaySuccessMessage(registrationForm, result.message || "Registration successful!");
                 setTimeout(() => {
-                    window.location.href = "";  // Redirect to home page after 2 seconds
+                    window.location.href ="http://127.0.0.1:8000/search" ;  // Redirect to home page after 2 seconds
                 }, 2000);
                 return;
             }
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (response.ok && result.success) {
                 // Handle successful login
-                window.location.href = "";  // Redirect to index page
+                window.location.href = "http://127.0.0.1:8000/search" ;  // Redirect to index page
                 return;
             }
             

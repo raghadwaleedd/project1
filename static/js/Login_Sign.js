@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Handle successful registration
                 displaySuccessMessage(registrationForm, result.message || "Registration successful!");
                 setTimeout(() => {
-                    window.location.href = "http://127.0.0.1:8000/search";  // Redirect to home page after 2 seconds
+                    window.location.href ="http://127.0.0.1:8000/search" ;  // Redirect to home page after 2 seconds
                 }, 2000);
                 return;
             }
@@ -88,20 +88,38 @@ document.addEventListener('DOMContentLoaded', function() {
         
         try {
             const response = await fetch("/auth/login/", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken')
-                },
-                body: JSON.stringify(data)
-            });
-            
+                                      method: 'POST',
+                                      headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRFToken': getCookie('csrftoken')
+                                              },
+                                      body: JSON.stringify(data) 
+                                      
+                                      });
+                                   
             const result = await response.json();
             
             if (response.ok && result.success) {
-                // Handle successful login
-                window.location.href = "http://127.0.0.1:8000/search";  // Redirect to index page
-                return;
+                     // Handle successful login  
+                    // Store JWT tokens in localStorage
+                    if (result.access) {
+                        localStorage.setItem('accessToken', result.access);
+                    }
+                    if (result.refresh) {
+                        localStorage.setItem('refreshToken', result.refresh);
+                    }
+                    
+                    // Store user info if available
+                    if (result.user_id) {
+                        localStorage.setItem('userId', result.user_id);
+                    }
+                    if (result.username) {
+                        localStorage.setItem('username', result.username);
+                    }
+                    
+                    console.log('Login successful, tokens stored');
+                    window.location.href = "http://127.0.0.1:8000/search" ;  // Redirect to index page
+                    return;
             }
             
             if (!response.ok) {

@@ -247,5 +247,94 @@
   text-transform: lowercase; 
   height: 50% ;
 }
+.google-btn {
+  width: 100% ;
+  padding: 12px 20px ;
+  margin: 15px 0 ;
+  background-color: #ffffff ;
+  border: 1px solid #dadce0 ;
+  border-radius: 8px ;
+  display: flex ;
+  align-items: center ;
+  justify-content: center ;
+  cursor: pointer ;
+  transition: all 0.3s ease  ;
+  font-size: 14px  ;
+  font-weight: 500 ;
+  color: #3c4043 ;
+  text-decoration: none  ;
+  box-shadow: 0 1px 3px rgba(62, 58, 58, 0.08)  ;
+}
 
+.google-btn:hover {
+  background-color: #f8f9fa !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12) !important;
+}
 
+.google-btn i {
+  margin-right: 12px ;
+  font-size: 18px ;
+  color: #4285f4 ;
+} 
+
+.divider {
+  text-align: center;
+  margin: 15px 0;
+  position: relative;
+}
+
+.divider:before,
+.divider:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 45%;
+  height: 1px;
+  background-color: #ddd;
+}
+
+.divider:before {
+  left: 0;
+}
+
+.divider:after {
+  right: 0;
+} 
+
+.signup_link {
+  margin: 25px 0;
+  text-align: center;
+  font-size: 14px;
+  color: #5f6368;
+}
+.signup_link a{
+  color: #1a73e8;
+  text-decoration: none;
+  font-weight: 500;
+  position: relative;
+  transition: color 0.3s ease;
+}
+.signup_link a:hover{
+  text-decoration: underline;  
+  color: #174ea6;
+} 
+
+.signup_link a::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background-color: #1a73e8;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+} 
+
+.signup_link a:hover::after {
+  transform: scaleX(1);
+} 
+.signup_link p {
+  margin: 0;
+  line-height: 1.5;
+}

@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 import uuid
 from rest_framework_simplejwt.tokens import RefreshToken 
 from datetime import timedelta
+from django.core.exceptions import ValidationError
 
 
 
@@ -15,6 +16,11 @@ AUTH_PROVIDERS = {'facebook': 'facebook', 'google': 'google',
 
 
 
+def validate_word_count(value):
+    if value and len(value.split()) > 100:
+        raise ValidationError(_('Feedback must be 100 words or less.') )
+
+                              
 class CustomUserManager(BaseUserManager):
     """
     Custom user model manager where email is the unique identifier
@@ -68,7 +74,6 @@ class CustomUserManager(BaseUserManager):
             raise ValueError(_('Superuser must have is_superuser=True.'))
 
         return self.create_user(email, username, password, **extra_fields)
-
     
 
 class CustomUser(AbstractUser):  
@@ -219,5 +224,42 @@ class CustomUser(AbstractUser):
         full_name = f"{self.first_name} {self.last_name}".strip()
         return full_name if full_name else self.username
 
+
+
+class UserRating(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='ratings') 
+    
+    rating = models.IntegerField(choices=[(1, '1 Star'), (2, '2 Stars'), (3, '3 Stars'), 
+                                          (4, '4 Stars'), (5, '5 Stars')]) 
+    
+    feedback = models.TextField(blank=True, null=True , validators=[validate_word_count] )
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.user.email} - {self.rating} stars ({self.created_at.strftime('%Y-%m-%d')})"
+    
+    
+    
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['user', 'created_at']),
+        ]
+    
+    @classmethod
+    def can_user_rate_again(cls, user):
+        """Check if user can submit a new rating (only after 6 months since last rating)"""
+        # Check if user account is at least 6 months old 
+        
+        six_months_ago = timezone.now() - timedelta(days=182)  # ~6 months
+        if user.date_joined > six_months_ago:
+            return False  # User's account is too new
+            
+        # Check if it's been 6 months since the last rating
+        last_rating = cls.objects.filter(user=user).order_by('-created_at').first()
+        if not last_rating:
+            return True  # User hasn't rated yet and account is old enough
+                
+        return last_rating.created_at <= six_months_ago
 
 

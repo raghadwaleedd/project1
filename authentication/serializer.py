@@ -239,4 +239,16 @@ class UserSettingsUpdateSerializer(serializers.ModelSerializer):
             'notifications_enabled',
             'daily_search_limit'
         ]
-        read_only_fields = ['daily_search_limit']
+        read_only_fields = ['daily_search_limit'] 
+        
+        
+        
+        
+class UserRatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserRating
+        fields = ['rating', 'feedback']
+        
+    def create(self, validated_data):
+        user = self.context['request'].user
+        return UserRating.objects.create(user=user, **validated_data)        

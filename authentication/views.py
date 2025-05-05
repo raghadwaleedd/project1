@@ -1,7 +1,8 @@
 from django.shortcuts import render 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import generics, status
+
 from rest_framework.permissions import IsAuthenticated , AllowAny
 from social_django.utils import load_strategy, load_backend
 from social_core.backends.google import GoogleOAuth2
@@ -18,6 +19,7 @@ import logging
 from .utils import * 
 from django.shortcuts import redirect
 from django.contrib import messages
+from .models import *
 
 class UserRegistrationView(APIView):
     permission_classes = [AllowAny]
@@ -69,7 +71,10 @@ class UserLoginView(APIView):
 
                 # Generate JWT tokens
                 refresh = RefreshToken.for_user(authenticated_user) 
-                return Response({'success': True}, status=status.HTTP_200_OK)
+                return Response({'success': True , 
+                                 'access': str(refresh.access_token),
+                                 'refresh': str(refresh)
+                                }, status=status.HTTP_200_OK)
             else:
                 # Increment failed login attempts
                 user.failed_login_attempts += 1
@@ -96,11 +101,12 @@ class UserLogoutView(APIView):
     def post(self, request):
         try:
             # Blacklist the refresh token
-            refresh_token = request.data.get('refresh')
-            token = RefreshToken(refresh_token)
-            token.blacklist()
+            refresh_token = request.data.get('refresh') 
+            if refresh_token:
+             token = RefreshToken(refresh_token)
+             token.blacklist()
             
-            return Response(status=status.HTTP_205_RESET_CONTENT)
+            return redirect('/')
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
  
@@ -168,6 +174,7 @@ class PasswordChangeView(APIView):
 
 
 
+
 @throttle_classes([AnonRateThrottle])
 class PasswordResetRequestView(APIView):
     permission_classes = [AllowAny]
@@ -218,4 +225,55 @@ class PasswordResetConfirmView(APIView):
         except (jwt.InvalidTokenError, User.DoesNotExist):
             logger.warning(f"Invalid password reset token used")
             return Response({'error': 'Invalid token'}, 
-                          status=status.HTTP_400_BAD_REQUEST)
+                          status=status.HTTP_400_BAD_REQUEST) 
+            
+            
+            
+            
+            
+class UserRatingCreateView(generics.CreateAPIView):
+    serializer_class = UserRatingSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        
+        # Check if user can rate again
+        if not UserRating.can_user_rate_again(user):
+            return Response(
+                {"error": "You can only submit a rating once every 6 months."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        serializer = self.get_serializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)  
+    
+     
+class UserRatingStatusView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        can_rate = UserRating.can_user_rate_again(user)
+        
+        auth_info = {
+            'username': user.username,
+            'email': user.email,
+            'id': user.id,
+            'auth_provider': getattr(user, 'auth_provider', 'unknown'),  # If you track auth provider
+            'is_authenticated': user.is_authenticated,
+            # Add any other relevant user info for debugging
+        }
+        # Get the last rating if it exists
+        last_rating = UserRating.objects.filter(user=user).order_by('-created_at').first()
+        
+        data = {
+            "can_rate": can_rate,
+            "last_rating_date": last_rating.created_at if last_rating else None,
+            "should_show_popup": can_rate ,
+            "auth_debug": auth_info  # Include debug info in response
+        }
+        
+        return Response(data)               

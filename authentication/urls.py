@@ -24,6 +24,10 @@ urlpatterns = [
     path('verify-email/<str:token>/', EmailVerificationView.as_view(), name='verify_email'),
     path('password-reset/', PasswordResetRequestView.as_view(), name='password_reset_request'),
     path('password-reset/<str:token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'), 
-    path('password-change/', PasswordChangeView.as_view(), name='password-change-view'),
+    path('password-change/', PasswordChangeView.as_view(), name='password-change-view'), 
+    
+    
+    path('ratings/submit/', UserRatingCreateView.as_view(), name='submit_rating'),
+    path('ratings/status/', UserRatingStatusView.as_view(), name='rating_status'),
 
 ]

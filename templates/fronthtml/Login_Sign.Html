@@ -1,7 +1,10 @@
-{% load static %}
+{% load static %} 
+{% load socialaccount %} 
+
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+  <head> 
+    
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="{% static 'css/Login_Sign.css' %}" /> 
@@ -11,7 +14,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
       integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
       crossorigin="anonymous"
-      referrerpolicy="no-referrer"
+      referrerpolicy="no-referrer" 
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -27,13 +30,16 @@
         <form method="POST" action="{% url 'user_register' %}" id="registration-form">
           {% csrf_token %}
           <h1 style="color: #1d3557;">Create Account</h1>
-          <span style="color: #1d3557;">or use email for registration</span>
           <input type="text" name="first_name" placeholder="First Name" required/>
           <input type="text" name="last_name" placeholder="Last Name" required/>
           <input type="email" name="email" placeholder="Email" required/>
           <input type="password" name="password" placeholder="Password" required/>
           <input type="password" name="password2" placeholder="Confirm Password" required/>
-          <button type="submit">Sign Up</button>
+          <button type="submit">Sign Up</button> 
+          <a href="{% provider_login_url 'google' %}" class="google-btn">
+            <i class="fab fa-google"></i>
+             Sign up with Google
+          </a>
           <a href="{% url 'index' %}" class="back-to-home">Back to Home</a>
         </form>
       </div>
@@ -41,11 +47,17 @@
         <form method="POST" action="{% url 'user_login' %}"  id="login-form" > 
           {% csrf_token %}
           <h1 style=" color: #1d3557;">Sign In</h1>
-          <span style=" color: #1d3557;">or use email password</span>
           <input type="email" name="email" placeholder="Email" required/>
           <input type="password" name="password" placeholder="Password" required/>            
-          <a href="#">Forgot password</a>
-          <button type="submit">Sign In</button>
+          <button type="submit">Sign In</button> 
+          
+          <a href="{% provider_login_url 'google' %}" class="google-btn">
+            <i class="fab fa-google"></i>
+            Sign in with Google
+          </a> 
+          <div class="signup_link">
+            <p>Forgot your Password? <a href="#">Reset Password</a></p> 
+          </div>
           <a href="{% url 'index' %}" class="back-to-home">Back to Home</a>
         </form>
       </div>
@@ -68,6 +80,7 @@
         </div>
       </div>
     </div>
-    <script src="{% static 'js/Login_Sign.js' %}"></script>
+    <script src="{% static 'js/Login_Sign.js' %}"></script> 
+  
   </body>
 </html>
